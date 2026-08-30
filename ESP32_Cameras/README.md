@@ -1,4 +1,5 @@
 ESP32 Cameras.
+Code is based on the board's example code.
 
 To install to XIAO board ( https://www.seeedstudio.com/XIAO-ESP32S3-Sense-p-5639.html ), use the Arduino IDE.
 1. Copy the contents of this directory to your Arduino sketches folder (~/Arduino on linux)
