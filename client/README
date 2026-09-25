@@ -1,0 +1,11 @@
+This is the client webpage.
+
+To use:
+1. Download the controller.html file from this directory.
+2. Open the page in a web browser and connect a gamepad (controller) to your computer
+3. Enter the subnet that you wish to search fro the robot on into the "IP Address Base" field.  If you are testing the robot's websocket server code on your own computer, enter 'localhost'
+4. Click submit
+5. Below the submit button, 0 or more buttons will appear after a few seconds.  These are the IP addresses at which the scanner believes it has found the robot
+6.  Click the appropriate IP address that you wish to control
+7. Touch a button or stick on the physical gamepad
+8. The gamepad display should start responding to your inputs, and will try to send the gamepad information over the websocket on port 8765, retrying on failure

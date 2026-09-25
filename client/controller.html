@@ -1,0 +1,347 @@
+<script>
+  const FPS = 60;
+  // Gamepad Drawer
+let draw_stick = function(text, lx, ly, a, b, c, d) {
+if (ly === 0) text = text.replace(a, [
+                                    "\u281f\u2809\u2809\u2809\u2809\u2839", 
+                                    "\u280f\u280b\u2809\u2809\u2809\u2839",
+                                    "\u280f\u2819\u2809\u2809\u2809\u2839",
+                                    "\u280f\u2809\u280b\u2809\u2809\u2839",
+                                    "\u280f\u2809\u2819\u2809\u2809\u2839",
+                                    "\u280f\u2809\u2809\u280b\u2809\u2839",
+                                    "\u280f\u2809\u2809\u2819\u2809\u2839",
+                                    "\u280f\u2809\u2809\u2809\u280b\u2839",
+                                    "\u280f\u2809\u2809\u2809\u2819\u2839",
+                                    "\u280f\u2809\u2809\u2809\u2809\u283b"][lx]);
+  if (ly === 1) text = text.replace(a, [
+                                    "\u282f\u2809\u2809\u2809\u2809\u2839", 
+                                    "\u280f\u280d\u2809\u2809\u2809\u2839",
+                                    "\u280f\u2829\u2809\u2809\u2809\u2839",
+                                    "\u280f\u2809\u280d\u2809\u2809\u2839",
+                                    "\u280f\u2809\u2829\u2809\u2809\u2839",
+                                    "\u280f\u2809\u2809\u280d\u2809\u2839",
+                                    "\u280f\u2809\u2809\u2829\u2809\u2839",
+                                    "\u280f\u2809\u2809\u2809\u280d\u2839",
+                                    "\u280f\u2809\u2809\u2809\u2829\u2839",
+                                    "\u280f\u2809\u2809\u2809\u2809\u283d"][lx]);
+  if (ly === 2) text = text.replace(b, [
+                                    "\u280f\u2800\u2800\u2800\u2800\u2838", 
+                                    "\u2807\u2801\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2808\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2801\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2808\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2801\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2808\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2801\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2808\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2800\u2839"][lx]);
+  if (ly === 3) text = text.replace(b, [
+                                    "\u2817\u2800\u2800\u2800\u2800\u2838", 
+                                    "\u2807\u2802\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2810\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2802\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2810\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2802\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2810\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2802\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2810\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2800\u283a"][lx]);
+  if (ly === 4) text = text.replace(b, [
+                                    "\u2827\u2800\u2800\u2800\u2800\u2838", 
+                                    "\u2807\u2804\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2820\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2804\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2820\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2804\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2820\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2804\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2820\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2800\u283c"][lx]);
+  if (ly === 5) text = text.replace(c, [
+                                    "\u280f\u2800\u2800\u2800\u2800\u2838", 
+                                    "\u2807\u2801\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2808\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2801\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2808\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2801\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2808\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2801\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2808\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2800\u2839"][lx]);
+  if (ly === 6) text = text.replace(c, [
+                                    "\u2817\u2800\u2800\u2800\u2800\u2838", 
+                                    "\u2807\u2802\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2810\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2802\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2810\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2802\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2810\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2802\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2810\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2800\u283a"][lx]);
+  if (ly === 7) text = text.replace(c, [
+                                    "\u2827\u2800\u2800\u2800\u2800\u2838", 
+                                    "\u2807\u2804\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2820\u2800\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2804\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2820\u2800\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2804\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2820\u2800\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2804\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2820\u2838",
+                                    "\u2807\u2800\u2800\u2800\u2800\u283c"][lx]);
+  if (ly === 8) text = text.replace(d, [
+                                    "\u282f\u2824\u2824\u2824\u2824\u283c", 
+                                    "\u2827\u2825\u2824\u2824\u2824\u283c",
+                                    "\u2827\u282c\u2824\u2824\u2824\u283c",
+                                    "\u2827\u2824\u2825\u2824\u2824\u283c",
+                                    "\u2827\u2824\u282c\u2824\u2824\u283c",
+                                    "\u2827\u2824\u2824\u2825\u2824\u283c",
+                                    "\u2827\u2824\u2824\u282c\u2824\u283c",
+                                    "\u2827\u2824\u2824\u2824\u2825\u283c",
+                                    "\u2827\u2824\u2824\u2824\u282c\u283c",
+                                    "\u2827\u2824\u2824\u2824\u2824\u283d"][lx]);
+  if (ly === 9) text = text.replace(d, [
+                                    "\u2837\u2824\u2824\u2824\u2824\u283c", 
+                                    "\u2827\u2826\u2824\u2824\u2824\u283c",
+                                    "\u2827\u2834\u2824\u2824\u2824\u283c",
+                                    "\u2827\u2824\u2826\u2824\u2824\u283c",
+                                    "\u2827\u2824\u2834\u2824\u2824\u283c",
+                                    "\u2827\u2824\u2824\u2826\u2824\u283c",
+                                    "\u2827\u2824\u2824\u2834\u2824\u283c",
+                                    "\u2827\u2824\u2824\u2824\u2826\u283c",
+                                    "\u2827\u2824\u2824\u2824\u2834\u283c",
+                                    "\u2827\u2824\u2824\u2824\u2824\u283e"][lx]);
+
+  if (ly !== 0 || ly !== 1) text = text.replace(a, "\u280f\u2809\u2809\u2809\u2809\u2839");
+  if (ly !== 2 || ly !== 3 || ly !== 4) text = text.replace(b, "\u2807\u2800\u2800\u2800\u2800\u2838");
+  if (ly !== 5 || ly !== 6 || ly !== 7) text = text.replace(c, "\u2807\u2800\u2800\u2800\u2800\u2838");
+  if (ly !== 8 || ly !== 9) text = text.replace(d, "\u2827\u2824\u2824\u2824\u2824\u283c");
+
+  return text;
+}
+
+// Start main program
+
+window.addEventListener("gamepadconnected", (e) => {
+  console.log(
+    "Gamepad connected at index %d: %s. %d buttons, %d axes.",
+    e.gamepad.index,
+    e.gamepad.id,
+    e.gamepad.buttons.length,
+    e.gamepad.axes.length,
+  );
+});
+
+// Gamepad drawer
+setInterval(function() {
+  let btn = navigator.getGamepads()
+  if (btn.length === 0) return;
+  let btns = btn[0];
+  if (!btns) return;
+  let buttons = btns.buttons;
+  if (buttons === undefined) return; // no gamepad connected
+  
+  let axes = btns.axes;
+  let text = `$g
+$I
+ a_____   $j  b_____
+ d_____              c_____
+ &a....                 $x     
+ &b....   $-      $+    $y   $a    
+ &c....                 $b
+ &d....     $O  $H          
+                      &e....      
+       $q              &f....    
+      $e$w$r             &g....    
+       $t              &h....    `;
+  text = text.replace("$g", btns.id);
+  text = text.replace("$I", robot_location);
+  text = text.replace("$j", (ws !== undefined && ws.readyState === WebSocket.OPEN) ? "<span style=\"color: #00ff00\">CONNECTED</span>" : "<span style=\"color: #ff0000\">NO SIGNAL</span>");
+
+  // buttons
+  if (buttons[6].pressed) text = text.replace("a_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("a_____", "-------");
+  if (buttons[7].pressed) text = text.replace("b_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("b_____", "-------");
+  if (buttons[5].pressed) text = text.replace("c_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("c_____", "-------");
+  if (buttons[4].pressed) text = text.replace("d_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("d_____", "-------");
+
+  if (buttons[3].pressed) text = text.replace("$x", "<span style=\"color: #c0c000;\">X</span>"); else text = text.replace("$x", "x");
+  if (buttons[0].pressed) text = text.replace("$y", "<span style=\"color: #0000ff;\">Y</span>"); else text = text.replace("$y", "y");
+  if (buttons[2].pressed) text = text.replace("$a", "<span style=\"color: #ff0000;\">A</span>"); else text = text.replace("$a", "a");
+  if (buttons[1].pressed) text = text.replace("$b", "<span style=\"color: #00ff00;\">B</span>"); else text = text.replace("$b", "b");
+
+  if (buttons[9].pressed) text = text.replace("$+", "<span style=\"color: #ff00ff;\">+</span>"); else text = text.replace("$+", ".");
+  if (buttons[8].pressed) text = text.replace("$-", "<span style=\"color: #ff00ff;\">-</span>"); else text = text.replace("$-", ".");
+  if (buttons[13].pressed) text = text.replace("$O", "<span style=\"color: #ff00ff;\">O</span>"); else text = text.replace("$O", ".");
+  if (buttons[12].pressed) text = text.replace("$H", "<span style=\"color: #ff00ff;\">H</span>"); else text = text.replace("$H", ".");
+  
+  // D-pad
+  if (axes[5] < 0) text = text.replace("$q", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$q", ".");
+  if (axes[5] > 0) text = text.replace("$t", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$t", ".");
+  if (axes[4] < 0) text = text.replace("$e", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$e", ".");
+  if (axes[4] > 0) text = text.replace("$r", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$r", ".");
+  if (axes[4] === 0 && axes[5] === 0) text = text.replace("$w", "<span style=\"color: #ff0000;\">#</span>"); else text = text.replace("$w", ".");
+
+  // left stick
+  let lx = Math.round(axes[0] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
+  let ly = Math.round(axes[1] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
+  text = draw_stick(text, lx, ly, "&a....", "&b....", "&c....", "&d....");
+
+  let rx = Math.round(axes[2] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
+  let ry = Math.round(axes[3] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
+  text = draw_stick(text, rx, ry, "&e....", "&f....", "&g....", "&h....");
+  
+  //text = text.replace("&a....", lx > 0 && ly > 1 ? "\u280f" : (lx === 0 && ly === 0 ? "\u281f" : "\u282f"));
+
+  document.getElementById("gamepad").innerHTML = text;
+}, 1000/FPS);
+</script>
+<script>
+  let ws = new WebSocket("ws://192.168.0.2:8765"); // Probably won't work, but we need a default
+  if (robot_location.length > 0) {
+    ws = new WebSocket("ws://"+(robot_location)+":8765");
+  }
+
+  setInterval(function() {
+    let btn = navigator.getGamepads()
+    if (btn.length === 0) return;
+    let btns = btn[0];
+    if (!btns) return;
+    let buttons = btns.buttons;
+    if (buttons === undefined) return; // no gamepad connected
+  
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+          x: buttons[3].pressed, y: buttons[0].pressed, a: buttons[2].pressed, b: buttons[1].pressed,
+          zl: buttons[6].pressed, l: buttons[4].pressed, zr: buttons[7].pressed, r: buttons[5].pressed,
+          stickL: [axes[0], axes[1]], stickR: [axes[2], axes[3]], padVert: axes[5], padHor: axes[4],
+          plus: buttons[9].pressed, minus: buttons[8].pressed, O: buttons[13].pressed, H: buttons[12].pressed
+        }
+      ));
+    } else {
+      ws.close();
+      if (robot_location.length > 0) {
+        ws = new WebSocket('ws://'+robot_location+':8765');
+      }
+    }
+  }, 1000/FPS);
+</script>
+<script>
+  // IP checker
+  var robot_location = null; // No connection
+  // Is set by the buttons that are created below
+
+  async function checkSiteExists(url, timeoutMs = 2000) {
+    //return url === "192.168.0.5" ? {url: "192.168.0.5", exists: true, error: null} :  {url, exists: false, error: error.name === 'AbortError' ? 'timeout' : error.message};
+    const controller = new AbortController();
+    
+    // Set timeout to abort the request
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      // Use HEAD method for lightweight existence check, or GET if HEAD is blocked
+      const response = await fetch(url, { 
+        method: 'HEAD', 
+        signal: controller.signal 
+      });
+      
+      clearTimeout(timeoutId);
+      
+      // HTTP 2xx or 3xx codes generally indicate the site exists
+      const exists = response.status >= 200 && response.status < 400;
+      
+      return { url: url, exists: exists, status: response.status };
+    } catch (error) {
+      clearTimeout(timeoutId);
+      // AbortError means it timed out; other errors mean network/site issues
+      return {url: url, exists: false, error: error.name === 'AbortError' ? 'timeout' : error.message };
+    }
+  }
+
+  function scanIPs(basename) {
+    const urls = [...Array.from({length: 256}).keys()].map(x => ("http://"+basename+x+":8080"));
+    const promises = urls.map(url => checkSiteExists(url, 2000));
+    // Promise.allSettled ensures we get results for all URLs, 
+    // even if some fail or timeout.
+    Promise.allSettled(promises).then(function(results) {
+      const filtered = results.filter(x => x.status === "fulfilled" && x.value.exists);
+      if (filtered.length == 0) {
+        return [];
+      }
+      const ips = filtered.map(x => x.value.url);
+      
+      DisplayIPs(ips);
+  });
+  }
+  function setLocation(location) {
+    robot_location = location;
+    ws = new WebSocket('ws://'+robot_location+':8765');
+    document.getElementById("lastKnownIP").innerHTML = "Last Known Robot IP: "+(robot_location);
+  }
+
+  function DisplayIPs(addrs) {
+    var inner = "";
+    for (const ip of addrs) {
+      inner += "<li><button onclick='setLocation(\""+ip+"\")'>"+ip+"</button></li>";
+    }
+    document.getElementById("ips").innerHTML = inner
+  }
+
+  function ValidateIPaddress(inputText) {
+    var ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    if (inputText === 'localhost') {
+      DisplayIPs(['127.0.0.1']);
+      return;
+    }
+    if(inputText.match(ipformat)) {
+      const splits = inputText.split(".");
+      scanIPs(splits.slice(0, -1).join(".")+".");
+      return true;
+    } else {
+      alert("You have entered an invalid IP address!");
+      return false;
+    }
+  }
+  function CheckIPs() {
+    const ip_base = document.getElementById('ip_address_base').value;
+    ValidateIPaddress(ip_base);
+  }
+  window.addEventListener("DOMContentLoaded", (e) => {document.getElementById("lastKnownIP").innerHTML = "Last Known Robot IP: "+(robot_location);});  
+</script>
+<h1>Robot Controller</h1>
+<ul>
+  <li id="lastKnownIP">Last Known Robot IP: </li>
+<li>IP Address Base: <input type='text' name='text1' id='ip_address_base'/></li>
+<li>Netmask: 255.255.255.0</li>
+<li><button id="submitButton" onclick="CheckIPs()">Submit</button>
+</ul>
+<ul id="ips">
+</ul>
+<pre style="
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 36px;
+  width: 2500px;
+  height: 800px;
+  line-height: 36px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+" id="gamepad">
+no gamepad
+ ______              ______
+ ______              ______
+   __                   
+  /  \    .      .      X
+ |    |               Y   A
+  \__/      .  .        B
+                   __
+       .          /  \
+      ...        |    |
+       .          \__/
+</pre>
+<style>
+body {
+    background-color: #000000; /* Black background */
+    color: #ffffff;            /* White text */
+}
+</style>
