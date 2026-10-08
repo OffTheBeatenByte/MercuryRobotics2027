@@ -1,8 +1,10 @@
 import asyncio, json, time, websockets
+import struct, serial
 
 latest = None          # newest controller state
 last_rx = 0.0          # when we received it
 
+ser = serial.Serial('COM3', 200000, timeout=1)
 
 """
     Nomenclature: 
@@ -40,9 +42,6 @@ def mecanum(vx, vy, w):
     return fl, fr, bl, br
 
 
-
-
-
 async def handler(ws):
     global latest, last_rx
     try:
@@ -53,10 +52,12 @@ async def handler(ws):
         latest = None                      # forces the control loop to stop motors
 
 async def control_loop():
+    global ser
     while True:
         stale = (time.monotonic() - last_rx) > 0.25
         if latest is None or stale:
-            pass                           # : send "stop" to the Pico
+            STOP = struct.pack('<4b', 0, 0, 0, 0)
+            ser.write(STOP)                           # : send "stop" to the Pico
         else:
             left_x, left_y = latest["stickL"]
             right_x = latest["stickR"][0]    # : compute wheel speeds, send to Pico
@@ -67,6 +68,21 @@ async def control_loop():
 
             fl, fr, bl, br = mecanum(vx, vy, w)     #TODO: turn these wheel commands into PWM motor commands
 
+            fl = round(fl * 126)
+            fr = round(fr * 126)
+            bl = round(bl * 126)
+            br = round(br * 126)
+
+
+            pack_1 = struct.pack('<4b', fr, fl, br, bl)
+
+            ser.write(pack_1)
+
+
+            # Use struct module to turn these into binary values 
+            # send code in Right/left Right/Left manner
+            #signed 8bit int (-127 to 126)
+            #these will function as a proportion of duty cycle: 126 = full power forward direction, 63 half power forward
 
 
 
