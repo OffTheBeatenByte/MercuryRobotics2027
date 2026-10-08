@@ -4,7 +4,7 @@ import struct, serial
 latest = None          # newest controller state
 last_rx = 0.0          # when we received it
 
-ser = serial.Serial('/dev/ttyACM0', 250000, timeout=1)
+ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
 
 """
     Nomenclature: 
