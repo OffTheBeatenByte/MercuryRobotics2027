@@ -198,9 +198,9 @@ $I
 </script>
 <script>
   let ws = new WebSocket("ws://192.168.0.2:8765"); // Probably won't work, but we need a default
-  if (robot_location.length > 0) {
-    ws = new WebSocket("ws://"+(robot_location)+":8765");
-  }
+  //if (robot_location.length > 0) {
+  //  ws = new WebSocket("ws://"+(robot_location)+":8765");
+  //}
 
   setInterval(function() {
     let btn = navigator.getGamepads()
@@ -209,6 +209,8 @@ $I
     if (!btns) return;
     let buttons = btns.buttons;
     if (buttons === undefined) return; // no gamepad connected
+
+    let axes = btns.axes;
   
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({
@@ -218,10 +220,13 @@ $I
           plus: buttons[9].pressed, minus: buttons[8].pressed, O: buttons[13].pressed, H: buttons[12].pressed
         }
       ));
+    } else if (ws.readyState === WebSocket.CONNECTING) {
+      // do nothing
     } else {
       ws.close();
       if (robot_location.length > 0) {
         ws = new WebSocket('ws://'+robot_location+':8765');
+        
       }
     }
   }, 1000/FPS);

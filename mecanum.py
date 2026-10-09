@@ -56,7 +56,7 @@ async def control_loop():
     while True:
         stale = (time.monotonic() - last_rx) > 0.25
         if latest is None or stale:
-            STOP = struct.pack('<4b', 0, 0, 0, 0)
+            STOP = struct.pack('<6b', 0, 0, 0, 0, 0, 0x0A)
             ser.write(STOP)                           # : send "stop" to the Pico
         else:
             left_x, left_y = latest["stickL"]
@@ -74,7 +74,8 @@ async def control_loop():
             br = round(br * 126)
 
 
-            pack_1 = struct.pack('<4b', fr, fl, br, bl)
+            pack_1 = struct.pack('<6b', fr, fl, br, bl, 0, 0x0A)
+            #print(pack_1)
 
             ser.write(pack_1)
 
