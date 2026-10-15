@@ -1,4 +1,4 @@
-<script>
+<script> // Gamepad drawing
   const FPS = 60;
   // Gamepad Drawer
 let draw_stick = function(text, lx, ly, a, b, c, d) {
@@ -121,6 +121,57 @@ if (ly === 0) text = text.replace(a, [
   return text;
 }
 
+function draw_gamepad(gp, active) {
+  let text = `$g
+$I
+ a_____   $j  b_____
+ d_____   $z   c_____
+ &a....                 $x     
+ &b....   $-      $+    $y   $a    
+ &c....                 $b
+ &d....     $O  $H          
+                      &e....      
+       $q              &f....    
+      $e$w$r             &g....    
+       $t              &h....    `;
+  text = text.replace("$g", gp.name);
+  text = text.replace("$I", robot_location);
+  text = text.replace("$z", active ? "<span style=\"color: #40ff40;\"> ACTIVE </span>" : "<span style=\"color: #ff4040;\">DISABLED</span>");
+  text = text.replace("$j", (ws !== undefined && ws.readyState === WebSocket.OPEN) ? "<span style=\"color: #00ff00\">CONNECTED</span>" : "<span style=\"color: #ff0000\">NO SIGNAL</span>");
+
+  // buttons
+  if (gp.zl) text = text.replace("a_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("a_____", "-------");
+  if (gp.zr) text = text.replace("b_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("b_____", "-------");
+  if (gp.r) text = text.replace("c_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("c_____", "-------");
+  if (gp.l) text = text.replace("d_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("d_____", "-------");
+
+  if (gp.x) text = text.replace("$x", "<span style=\"color: #c0c000;\">X</span>"); else text = text.replace("$x", "x");
+  if (gp.y) text = text.replace("$y", "<span style=\"color: #0000ff;\">Y</span>"); else text = text.replace("$y", "y");
+  if (gp.a) text = text.replace("$a", "<span style=\"color: #ff0000;\">A</span>"); else text = text.replace("$a", "a");
+  if (gp.b) text = text.replace("$b", "<span style=\"color: #00ff00;\">B</span>"); else text = text.replace("$b", "b");
+
+  if (gp.plus) text = text.replace("$+", "<span style=\"color: #ff00ff;\">+</span>"); else text = text.replace("$+", ".");
+  if (gp.minus) text = text.replace("$-", "<span style=\"color: #ff00ff;\">-</span>"); else text = text.replace("$-", ".");
+  if (gp.O) text = text.replace("$O", "<span style=\"color: #ff00ff;\">O</span>"); else text = text.replace("$O", ".");
+  if (gp.H) text = text.replace("$H", "<span style=\"color: #ff00ff;\">H</span>"); else text = text.replace("$H", ".");
+  
+  // D-pad
+  if (gp.padVert < 0) text = text.replace("$q", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$q", ".");
+  if (gp.padVert > 0) text = text.replace("$t", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$t", ".");
+  if (gp.padHor < 0) text = text.replace("$e", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$e", ".");
+  if (gp.padHor > 0) text = text.replace("$r", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$r", ".");
+  if (gp.padHor === 0 && gp.padVert === 0) text = text.replace("$w", "<span style=\"color: #ff0000;\">#</span>"); else text = text.replace("$w", ".");
+
+  // left stick
+  let lx = Math.round(gp.stickL[0] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
+  let ly = Math.round(gp.stickL[1] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
+  text = draw_stick(text, lx, ly, "&a....", "&b....", "&c....", "&d....");
+
+  let rx = Math.round(gp.stickR[0] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
+  let ry = Math.round(gp.stickR[1] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
+  text = draw_stick(text, rx, ry, "&e....", "&f....", "&g....", "&h....");
+  return text;
+}
 // Start main program
 
 window.addEventListener("gamepadconnected", (e) => {
@@ -135,73 +186,42 @@ window.addEventListener("gamepadconnected", (e) => {
 
 // Gamepad drawer
 setInterval(function() {
-  let btn = navigator.getGamepads()
-  if (btn.length === 0) return;
-  let btns = btn[0];
-  if (!btns) return;
-  let buttons = btns.buttons;
-  if (buttons === undefined) return; // no gamepad connected
-  
-  let axes = btns.axes;
-  let text = `$g
-$I
- a_____   $j  b_____
- d_____              c_____
- &a....                 $x     
- &b....   $-      $+    $y   $a    
- &c....                 $b
- &d....     $O  $H          
-                      &e....      
-       $q              &f....    
-      $e$w$r             &g....    
-       $t              &h....    `;
-  text = text.replace("$g", btns.id);
-  text = text.replace("$I", robot_location);
-  text = text.replace("$j", (ws !== undefined && ws.readyState === WebSocket.OPEN) ? "<span style=\"color: #00ff00\">CONNECTED</span>" : "<span style=\"color: #ff0000\">NO SIGNAL</span>");
-
-  // buttons
-  if (buttons[6].pressed) text = text.replace("a_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("a_____", "-------");
-  if (buttons[7].pressed) text = text.replace("b_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("b_____", "-------");
-  if (buttons[5].pressed) text = text.replace("c_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("c_____", "-------");
-  if (buttons[4].pressed) text = text.replace("d_____", "<span style=\"color: #00ffff;\">#######</span>"); else text = text.replace("d_____", "-------");
-
-  if (buttons[3].pressed) text = text.replace("$x", "<span style=\"color: #c0c000;\">X</span>"); else text = text.replace("$x", "x");
-  if (buttons[0].pressed) text = text.replace("$y", "<span style=\"color: #0000ff;\">Y</span>"); else text = text.replace("$y", "y");
-  if (buttons[2].pressed) text = text.replace("$a", "<span style=\"color: #ff0000;\">A</span>"); else text = text.replace("$a", "a");
-  if (buttons[1].pressed) text = text.replace("$b", "<span style=\"color: #00ff00;\">B</span>"); else text = text.replace("$b", "b");
-
-  if (buttons[9].pressed) text = text.replace("$+", "<span style=\"color: #ff00ff;\">+</span>"); else text = text.replace("$+", ".");
-  if (buttons[8].pressed) text = text.replace("$-", "<span style=\"color: #ff00ff;\">-</span>"); else text = text.replace("$-", ".");
-  if (buttons[13].pressed) text = text.replace("$O", "<span style=\"color: #ff00ff;\">O</span>"); else text = text.replace("$O", ".");
-  if (buttons[12].pressed) text = text.replace("$H", "<span style=\"color: #ff00ff;\">H</span>"); else text = text.replace("$H", ".");
-  
-  // D-pad
-  if (axes[5] < 0) text = text.replace("$q", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$q", ".");
-  if (axes[5] > 0) text = text.replace("$t", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$t", ".");
-  if (axes[4] < 0) text = text.replace("$e", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$e", ".");
-  if (axes[4] > 0) text = text.replace("$r", "<span style=\"color: #ffff00;\">#</span>"); else text = text.replace("$r", ".");
-  if (axes[4] === 0 && axes[5] === 0) text = text.replace("$w", "<span style=\"color: #ff0000;\">#</span>"); else text = text.replace("$w", ".");
-
-  // left stick
-  let lx = Math.round(axes[0] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
-  let ly = Math.round(axes[1] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
-  text = draw_stick(text, lx, ly, "&a....", "&b....", "&c....", "&d....");
-
-  let rx = Math.round(axes[2] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
-  let ry = Math.round(axes[3] * 4.5 + 4.5); // -1 to 1 --> 0 to 9
-  text = draw_stick(text, rx, ry, "&e....", "&f....", "&g....", "&h....");
-  
-  //text = text.replace("&a....", lx > 0 && ly > 1 ? "\u280f" : (lx === 0 && ly === 0 ? "\u281f" : "\u282f"));
-
+  let text = draw_gamepad(gamepad, telemetry.control === "manual");
+  let ai_gp_text = draw_gamepad(telemetry.ai_gamepad, telemetry.control !== "manual");
   document.getElementById("gamepad").innerHTML = text;
+  document.getElementById("ai_gamepad").innerHTML = ai_gp_text;
 }, 1000/FPS);
 </script>
-<script>
-  let ws = new WebSocket("ws://192.168.0.2:8765"); // Probably won't work, but we need a default
-  //if (robot_location.length > 0) {
-  //  ws = new WebSocket("ws://"+(robot_location)+":8765");
-  //}
+<script> // Websocket script
+  function create_websocket(ip) {
+    let ws = new WebSocket(ip);
+    // Add telemetry listener
+    ws.addEventListener("message", (event) => {
+      //console.log(event.data);
+      try {
+        const json = JSON.parse(event.data); // attempt parse
+        console.log("Parsed JSON:", json);
+      } catch (e) {
+        console.log("Received non-JSON text from websocket:", event.data);
+        return;
+      }
+      telemetry = json;
+    });
+    return ws;
+  }
 
+  // Globals
+  let gamepad = {x: false, y: false, a: false, b: false, zl: false, l: false, zr: false, r: false, stickL: [0, 0], stickR: [0, 0], padVert: 0, padHor: 0, plus: false, minus: false, O: false, H: false, name: "DISCONNECTED GAMEPAD"};
+  let telemetry = {
+    state: "pre-match",
+    control: "manual",
+    wheel_powers: [100, -40, 60, -127], // front_left, front_right, back_left, back_right.  -127 to 127
+    heading: 0, // degrees
+    ai_gamepad: {x: false, y: false, a: false, b: false, zl: false, l: false, zr: false, r: false, stickL: [0, 0], stickR: [0, 0], padVert: 0, padHor: 0, plus: false, minus: false, O: false, H: false, name: "DISCONNECTED AI CONTROL"},
+  };
+  let ws = create_websocket("ws://192.168.0.2:8765"); // Probably won't work, but we need a default
+
+  // Send the gamepad data to the robot
   setInterval(function() {
     let btn = navigator.getGamepads()
     if (btn.length === 0) return;
@@ -211,27 +231,28 @@ $I
     if (buttons === undefined) return; // no gamepad connected
 
     let axes = btns.axes;
-  
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({
+    gamepad = {
           x: buttons[3].pressed, y: buttons[0].pressed, a: buttons[2].pressed, b: buttons[1].pressed,
           zl: buttons[6].pressed, l: buttons[4].pressed, zr: buttons[7].pressed, r: buttons[5].pressed,
           stickL: [axes[0], axes[1]], stickR: [axes[2], axes[3]], padVert: axes[5], padHor: axes[4],
-          plus: buttons[9].pressed, minus: buttons[8].pressed, O: buttons[13].pressed, H: buttons[12].pressed
-        }
-      ));
+          plus: buttons[9].pressed, minus: buttons[8].pressed, O: buttons[13].pressed, H: buttons[12].pressed,
+          name: btns.id
+        };
+  
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(gamepad));
     } else if (ws.readyState === WebSocket.CONNECTING) {
       // do nothing
     } else {
       ws.close();
       if (robot_location.length > 0) {
-        ws = new WebSocket('ws://'+robot_location+':8765');
+        ws = create_websocket('ws://'+robot_location+':8765');
         
       }
     }
   }, 1000/FPS);
 </script>
-<script>
+<script> // Ip Checking
   // IP checker
   var robot_location = null; // No connection
   // Is set by the buttons that are created below
@@ -313,6 +334,53 @@ $I
   }
   window.addEventListener("DOMContentLoaded", (e) => {document.getElementById("lastKnownIP").innerHTML = "Last Known Robot IP: "+(robot_location);});  
 </script>
+<script> // Draw Sensor canvas
+  setInterval(function() {
+    // global telemetry
+    const c = document.getElementById("sensor_diagram").getContext('2d');
+    // Draw frame
+    c.fillStyle = "white";
+    c.fillRect(0, 0, 700, 700);
+    c.fillStyle = "black";
+    c.fillRect(2, 2, 696, 696);
+    // Draw robot outline
+    c.fillStyle = "white";
+    c.fillRect(200, 200, 300, 300);
+    c.fillStyle = "black";
+    c.fillRect(202, 202, 296, 296);
+    
+    // Draw left gauges
+    c.fillStyle = "white";
+    c.fillRect(200, 200, 30, 300);
+    c.fillStyle = "black";
+    c.fillRect(202, 202, 26, 146);
+    c.fillRect(202, 352, 26, 146);
+    c.fillStyle = "blue";
+    let power = telemetry.wheel_powers[0];
+    c.fillRect(202, power >= 0 ? 75+200 : 275+(Math.abs(power)/127*73), 26, -Math.abs(power)/127*73);
+    power = telemetry.wheel_powers[1];
+    c.fillRect(202, power >= 0 ? 75+350 : 425+(Math.abs(power)/127*73), 26, -Math.abs(power)/127*73);
+    c.fillStyle = "lightblue"
+    c.fillRect(202, 274, 26, 2);
+    c.fillRect(202, 424, 26, 2);
+
+    // Draw right gauges
+    c.fillStyle = "white";
+    c.fillRect(470, 200, 30, 300);
+    c.fillStyle = "black";
+    c.fillRect(472, 202, 26, 146);
+    c.fillRect(472, 352, 26, 146);
+    c.fillStyle = "blue";
+    power = telemetry.wheel_powers[2];
+    c.fillRect(472, power >= 0 ? 75+200 : 275+(Math.abs(power)/127*73), 26, -Math.abs(power)/127*73);
+    power = telemetry.wheel_powers[3];
+    c.fillRect(472, power >= 0 ? 75+350 : 425+(Math.abs(power)/127*73), 26, -Math.abs(power)/127*73);
+    c.fillStyle = "lightblue"
+    c.fillRect(472, 274, 26, 2);
+    c.fillRect(472, 424, 26, 2);
+  }, 1000/FPS);
+</script>
+<html>
 <h1>Robot Controller</h1>
 <ul>
   <li id="lastKnownIP">Last Known Robot IP: </li>
@@ -322,11 +390,12 @@ $I
 </ul>
 <ul id="ips">
 </ul>
-<pre style="
+<div class="main_grid">
+<div><pre style="
   font-family: 'Courier New', Courier, monospace;
   font-size: 36px;
-  width: 2500px;
-  height: 800px;
+  width: 700px;
+  height: 700px;
   line-height: 36px;
   margin: 0;
   padding: 0;
@@ -343,10 +412,44 @@ no gamepad
        .          /  \
       ...        |    |
        .          \__/
-</pre>
+</pre></div>
+<div><pre style="
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 36px;
+  width: 700px;
+  height: 700px;
+  line-height: 36px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+" id="ai_gamepad">
+no connection
+ ______              ______
+ ______              ______
+   __                   
+  /  \    .      .      X
+ |    |               Y   A
+  \__/      .  .        B
+                   __
+       .          /  \
+      ...        |    |
+       .          \__/
+</pre></div>
+<div><canvas id="sensor_diagram" width="700px" height="700px"></canvas></div>
+</div>
+</html>
 <style>
 body {
     background-color: #000000; /* Black background */
     color: #ffffff;            /* White text */
+}
+.main_grid {
+  display: grid;
+  grid-template-columns: 700px 700px;
+  column-gap: 10px;
+  row-gap: 10px;
+}
+#canvas {
+  image-rendering: pixelated;
 }
 </style>
