@@ -196,17 +196,18 @@ setInterval(function() {
   function create_websocket(ip) {
     let ws = new WebSocket(ip);
     // Add telemetry listener
-    ws.addEventListener("message", (event) => {
+    ws.onmessage = function(event) {
       //console.log(event.data);
       try {
         const json = JSON.parse(event.data); // attempt parse
-        console.log("Parsed JSON:", json);
+        //console.log("Parsed JSON:", json);
+        telemetry = json;
       } catch (e) {
         console.log("Received non-JSON text from websocket:", event.data);
         return;
       }
-      telemetry = json;
-    });
+    };
+    console.log(ws.onmessage);
     return ws;
   }
 
@@ -217,6 +218,7 @@ setInterval(function() {
     control: "manual",
     wheel_powers: [100, -40, 60, -127], // front_left, front_right, back_left, back_right.  -127 to 127
     heading: 0, // degrees
+    ultrasonic_distances: [100, 100, 100, 100],
     ai_gamepad: {x: false, y: false, a: false, b: false, zl: false, l: false, zr: false, r: false, stickL: [0, 0], stickR: [0, 0], padVert: 0, padHor: 0, plus: false, minus: false, O: false, H: false, name: "DISCONNECTED AI CONTROL"},
   };
   let ws = create_websocket("ws://192.168.0.2:8765"); // Probably won't work, but we need a default
@@ -301,7 +303,7 @@ setInterval(function() {
   }
   function setLocation(location) {
     robot_location = location;
-    ws = new WebSocket('ws://'+robot_location+':8765');
+    ws = create_websocket('ws://'+robot_location+':8765');
     document.getElementById("lastKnownIP").innerHTML = "Last Known Robot IP: "+(robot_location);
   }
 
@@ -348,7 +350,7 @@ setInterval(function() {
     c.fillRect(200, 200, 300, 300);
     c.fillStyle = "black";
     c.fillRect(202, 202, 296, 296);
-    
+
     // Draw left gauges
     c.fillStyle = "white";
     c.fillRect(200, 200, 30, 300);
@@ -395,7 +397,7 @@ setInterval(function() {
   font-family: 'Courier New', Courier, monospace;
   font-size: 36px;
   width: 700px;
-  height: 700px;
+  height: 450px;
   line-height: 36px;
   margin: 0;
   padding: 0;
@@ -417,7 +419,7 @@ no gamepad
   font-family: 'Courier New', Courier, monospace;
   font-size: 36px;
   width: 700px;
-  height: 700px;
+  height: 450px;
   line-height: 36px;
   margin: 0;
   padding: 0;

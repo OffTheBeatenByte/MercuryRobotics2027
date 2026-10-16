@@ -3,8 +3,34 @@ import struct, serial
 
 latest = None          # newest controller state
 last_rx = 0.0          # when we received it
+telemetry = {
+    "state": "pre-match",
+    "control": "manual", # allowed: "manual", "ai"
+    "wheel_powers": [0, 0, 0, 0], #front_left, front_right, back_left, back_right.  -127 to 127
+    "heading": 0, # degrees
+    "ultrasonic_distances": [100, 100, 100, 100],
+    "ai_gamepad": {
+        "x": False,
+        "y": False,
+        "a": False,
+        "b": False,
+        "zl": False,
+        "l": False,
+        "zr": False,
+        "r": False,
+        "stickL": [0, 0],
+        "stickR": [0, 0],
+        "padVert": 0,
+        "padHor": 0,
+        "plus": False,
+        "minus": False,
+        "O": False,
+        "H": False,
+        "name": "ROBOT AI CONTROLLER"
+    }
+}
 
-ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
+ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0) # timeout=0 means nonblocking reads
 
 """
     Nomenclature: 
@@ -48,11 +74,12 @@ async def handler(ws):
         async for message in ws:           # Waits until a frame arrives, then reads data, then waits and repeats
             latest = json.loads(message)   # controller JSON data
             last_rx = time.monotonic()     # time
+            ws.send(json.dumps(telemetry)) # send the telemetry packet
     finally:
         latest = None                      # forces the control loop to stop motors
 
 async def control_loop():
-    global ser
+    global ser, telemetry
     while True:
         stale = (time.monotonic() - last_rx) > 0.25
         if latest is None or stale:
@@ -66,26 +93,29 @@ async def control_loop():
             vy = -deadzone(left_y)  #This assumes that the controller JSON data assumes joystick pointing away from user is negative. Get rid of minus sign if that's not the case
             w = deadzone(right_x)
 
-            fl, fr, bl, br = mecanum(vx, vy, w)     #TODO: turn these wheel commands into PWM motor commands
+            fl, fr, bl, br = mecanum(vx, vy, w)
 
             fl = round(fl * 126)
             fr = round(fr * 126)
             bl = round(bl * 126)
             br = round(br * 126)
+            telemetry["wheel_powers"] = [fl, fr, bl, br]
 
 
             pack_1 = struct.pack('<6b', fr, fl, br, bl, 0, 0x0A)
             #print(pack_1)
 
             ser.write(pack_1)
-
-
             # Use struct module to turn these into binary values 
             # send code in Right/left Right/Left manner
             #signed 8bit int (-127 to 126)
             #these will function as a proportion of duty cycle: 126 = full power forward direction, 63 half power forward
 
-
+            if ser.in_waiting > 0:
+                data = ser.read(ser.in_waiting).split(0x0A)
+                if len(data[-1]) == 8:
+                    telemetry["ultrasonic_distances"] = struct.unpack("<HHHH") # TODO: Test this bit
+                
 
         await asyncio.sleep(0.02)          # 50 Hz. The await is what lets messages arrive
 
